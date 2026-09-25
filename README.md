@@ -41,6 +41,10 @@ This project provides interactive tools for calculating thermophysical propertie
 
 MIT License - see LICENSE file for details
 
-## Author
+## Authors
 
-Nonpawit Munpleng
+| Name | Student ID |
+|------|------------|
+| Nonpawit Munpleng | 2311210229 |
+| Mintada Khanthong | 2511410033 |
+| Runch Suwanchart | 2511410041 |
