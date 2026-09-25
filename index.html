@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบวิเคราะห์และคำนวณการระบายความร้อนสปินเดิล (Spindle Cooling System)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <header class="bg-slate-800/80 backdrop-blur border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-brand-600 rounded-lg text-white">
+                    <i class="fa-solid fa-temperature-arrow-down text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white leading-tight">แดชบอร์ดวิเคราะห์ระบบระบายความร้อนสปินเดิล</h1>
+                    <p class="text-xs text-slate-400">Spindle Liquid Cooling System Analysis Dashboard</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    น้ำยาหล่อเย็น PTT 50:50 MEG
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <!-- Mass Flow Rate -->
+            <div class="bg-slate-800 border border-slate-700/60 rounded-xl p-4 shadow-sm relative overflow-hidden">
+                <div class="text-slate-400 text-xs font-medium flex items-center justify-between">
+                    <span>อัตราการไหลเชิงมวล (m)</span>
+                    <i class="fa-solid fa-water text-brand-500"></i>
+                </div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span class="text-2xl font-bold text-white">0.0166</span>
+                    <span class="text-xs text-slate-400 font-mono">kg/s</span>
+                </div>
+                <div class="mt-1 text-xs text-slate-400">
+                    อัตราการไหลเชิงปริมาตร: <span class="text-slate-200">16.0 cm³/s</span>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-brand-500"></div>
+            </div>
+
+            <!-- Heat Transfer Rate -->
+            <div class="bg-slate-800 border border-slate-700/60 rounded-xl p-4 shadow-sm relative overflow-hidden">
+                <div class="text-slate-400 text-xs font-medium flex items-center justify-between">
+                    <span>อัตราการถ่ายเทความร้อน (Q)</span>
+                    <i class="fa-solid fa-bolt text-amber-500"></i>
+                </div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span class="text-2xl font-bold text-emerald-400">139.07</span>
+                    <span class="text-xs text-slate-400 font-mono">W</span>
+                </div>
+                <div class="mt-1 text-xs text-slate-400">
+                    กรณีมีระบบระบายความร้อน
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
+            </div>
+
+            <!-- Heat Storage Rate -->
+            <div class="bg-slate-800 border border-slate-700/60 rounded-xl p-4 shadow-sm relative overflow-hidden">
+                <div class="text-slate-400 text-xs font-medium flex items-center justify-between">
+                    <span>อัตราการสะสมความร้อน</span>
+                    <i class="fa-solid fa-box-archive text-blue-400"></i>
+                </div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span class="text-2xl font-bold text-blue-400">10.79</span>
+                    <span class="text-xs text-slate-400 font-mono">W</span>
+                </div>
+                <div class="mt-1 text-xs text-slate-400">
+                    สะสมในถังพักน้ำยา
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
+            </div>
+
+            <!-- Heat Generation Rate -->
+            <div class="bg-slate-800 border border-slate-700/60 rounded-xl p-4 shadow-sm relative overflow-hidden">
+                <div class="text-slate-400 text-xs font-medium flex items-center justify-between">
+                    <span>อัตราการเกิดความร้อนรวม</span>
+                    <i class="fa-solid fa-fire text-rose-500"></i>
+                </div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span class="text-2xl font-bold text-rose-400">74.74</span>
+                    <span class="text-xs text-slate-400 font-mono">W</span>
+                </div>
+                <div class="mt-1 text-xs text-slate-400">
+                    กรณีไม่มีระบบระบายความร้อน
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-rose-500"></div>
+            </div>
+
+            <!-- Temperature Difference -->
+            <div class="bg-slate-800 border border-slate-700/60 rounded-xl p-4 shadow-sm relative overflow-hidden">
+                <div class="text-slate-400 text-xs font-medium flex items-center justify-between">
+                    <span>การเปลี่ยนแปลงอุณหภูมิ (dT)</span>
+                    <i class="fa-solid fa-temperature-half text-purple-400"></i>
+                </div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span class="text-2xl font-bold text-purple-400">2.41</span>
+                    <span class="text-xs text-slate-400 font-mono">°C</span>
+                </div>
+                <div class="mt-1 text-xs text-slate-400">
+                    ผลต่างระหว่างทางเข้า-ออก
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-purple-500"></div>
+            </div>
+        </section>
+
+        <section class="bg-slate-800 border border-slate-700/60 rounded-xl p-5 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                <div>
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-brand-500"></i>
+                        กราฟเปรียบเทียบการเปลี่ยนแปลงอุณหภูมิตามเวลา
+                    </h2>
+                    <p class="text-xs text-slate-400">เปรียบเทียบการทำงานระหว่างแบบมีระบบระบายความร้อน (With Cooling) และไม่มีระบบระบายความร้อน (Without Cooling)</p>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-1 flex text-xs">
+                        <button id="btnModeWC" onclick="switchChartMode('WC')" class="px-3 py-1.5 rounded-md font-medium bg-brand-600 text-white transition">มีระบบระบายความร้อน</button>
+                        <button id="btnModeWOC" onclick="switchChartMode('WOC')" class="px-3 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition">ไม่มีระบบระบายความร้อน</button>
+                        <button id="btnModeBoth" onclick="switchChartMode('BOTH')" class="px-3 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition">เปรียบเทียบเฉพาะหัวสปินเดิล (T2)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Canvas Container -->
+            <div class="relative w-full h-[360px]">
+                <canvas id="thermoChart"></canvas>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <section class="lg:col-span-5 bg-slate-800 border border-slate-700/60 rounded-xl p-5 shadow-sm flex flex-col justify-between">
+                <div>
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2 mb-3">
+                        <i class="fa-solid fa-flask text-brand-500"></i>
+                        คุณสมบัติของน้ำยาหล่อเย็นและซิลิโคนระบายความร้อน
+                    </h2>
+                    <p class="text-xs text-slate-400 mb-4">PTT Super Long Life Coolant (ผสมน้ำ 50:50) และ Thermal Interface Material</p>
+
+                    <div class="space-y-4">
+                        <!-- Fluid Specs -->
+                        <div>
+                            <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2 border-b border-slate-700 pb-1">
+                                คุณสมบัติของน้ำยาหล่อเย็น (Coolant Properties)
+                            </h3>
+                            <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                                <dt class="text-slate-400">ความหนาแน่น (density):</dt>
+                                <dd class="font-mono text-slate-200 text-right">1,064 kg/m³</dd>
+                                
+                                <dt class="text-slate-400">ความจุความร้อนจำเพาะ (Cp):</dt>
+                                <dd class="font-mono text-slate-200 text-right">3.473 kJ/kg·K</dd>
+                                
+                                <dt class="text-slate-400">จุดเดือด (Boiling Point):</dt>
+                                <dd class="font-mono text-slate-200 text-right">108.0 °C</dd>
+                                
+                                <dt class="text-slate-400">จุดเยือกแข็ง (Freezing Point):</dt>
+                                <dd class="font-mono text-slate-200 text-right">-37.0 °C</dd>
+                                
+                                <dt class="text-slate-400">มวลน้ำยาหล่อเย็นรวม (m):</dt>
+                                <dd class="font-mono text-slate-200 text-right">5.34 kg</dd>
+                            </dl>
+                        </div>
+
+                        <!-- Thermal Paste Specs -->
+                        <div>
+                            <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2 border-b border-slate-700 pb-1">
+                                คุณสมบัติซิลิโคนระบายความร้อน (Thermal Paste)
+                            </h3>
+                            <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                                <dt class="text-slate-400">รุ่น / ยี่ห้อ:</dt>
+                                <dd class="font-medium text-slate-200 text-right">Thermal Grizzly Kryonaut</dd>
+                                
+                                <dt class="text-slate-400">ค่าการนำความร้อน:</dt>
+                                <dd class="font-mono text-slate-200 text-right">12.5 W/m·K</dd>
+                                
+                                <dt class="text-slate-400">ความหนืด (Viscosity):</dt>
+                                <dd class="font-mono text-slate-200 text-right">130 - 170 Pa·s</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-slate-700/60 text-xs text-slate-400 flex items-center justify-between">
+                    <span><i class="fa-solid fa-circle-info mr-1 text-brand-500"></i> สภาวะทดสอบคงที่ (Steady State)</span>
+                    <span class="font-mono text-slate-300">ความดัน 1.013 bar</span>
+                </div>
+            </section>
+
+            <section class="lg:col-span-7 bg-slate-800 border border-slate-700/60 rounded-xl p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-calculator text-brand-500"></i>
+                            เครื่องมือคำนวณสภาวะอุณหพลศาสตร์แบบโต้ตอบ
+                        </h2>
+                        <p class="text-xs text-slate-400">คำนวณอัตราการถ่ายเทความร้อน (Q), ผลต่างอุณหภูมิ (dT), เอนทัลปี (dh) และพลังงานภายใน (du)</p>
+                    </div>
+                    <button onclick="resetCalculator()" class="text-xs text-slate-400 hover:text-white underline">
+                        คืนค่าเริ่มต้น
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <!-- Input 1: Mass Flow rate -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">อัตราการไหลเชิงมวล (m)</label>
+                        <div class="relative">
+                            <input type="number" id="calcMdot" value="0.016613" step="0.0001" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-brand-500">
+                            <span class="absolute right-3 top-2 text-xs text-slate-500 font-mono">kg/s</span>
+                        </div>
+                    </div>
+
+                    <!-- Input 2: Specific Heat -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">ความจุความร้อนจำเพาะ (Cp)</label>
+                        <div class="relative">
+                            <input type="number" id="calcCp" value="3.473" step="0.001" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-brand-500">
+                            <span class="absolute right-3 top-2 text-xs text-slate-500 font-mono">kJ/kg·K</span>
+                        </div>
+                    </div>
+
+                    <!-- Input 3: T1 Inlet -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">อุณหภูมิขาเข้า T1 (Inlet)</label>
+                        <div class="relative">
+                            <input type="number" id="calcT1" value="28.05" step="0.01" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-brand-500">
+                            <span class="absolute right-3 top-2 text-xs text-slate-500 font-mono">°C</span>
+                        </div>
+                    </div>
+
+                    <!-- Input 4: T2 Outlet -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">อุณหภูมิขาออก T2 (Outlet)</label>
+                        <div class="relative">
+                            <input type="number" id="calcT2" value="30.46" step="0.01" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-brand-500">
+                            <span class="absolute right-3 top-2 text-xs text-slate-500 font-mono">°C</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outputs Display -->
+                <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-4 space-y-3">
+                    <div class="text-xs font-semibold text-brand-400 uppercase tracking-wide">ผลลัพธ์การคำนวณ (Calculated Results)</div>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                        <div class="bg-slate-800 p-2.5 rounded-lg border border-slate-700/50">
+                            <div class="text-[10px] text-slate-400">การเปลี่ยนแปลงอุณหภูมิ (dT)</div>
+                            <div id="outDeltaT" class="text-base font-bold font-mono text-purple-400 mt-0.5">2.41 °C</div>
+                        </div>
+
+                        <div class="bg-slate-800 p-2.5 rounded-lg border border-slate-700/50">
+                            <div class="text-[10px] text-slate-400">อัตราการถ่ายเทความร้อน (Q)</div>
+                            <div id="outQ" class="text-base font-bold font-mono text-emerald-400 mt-0.5">139.07 W</div>
+                        </div>
+
+                        <div class="bg-slate-800 p-2.5 rounded-lg border border-slate-700/50">
+                            <div class="text-[10px] text-slate-400">การเปลี่ยนแปลงเอนทัลปี (dh)</div>
+                            <div id="outDeltah" class="text-base font-bold font-mono text-amber-400 mt-0.5">8.37 kJ/kg</div>
+                        </div>
+
+                        <div class="bg-slate-800 p-2.5 rounded-lg border border-slate-700/50">
+                            <div class="text-[10px] text-slate-400">พลังงานภายใน (du)</div>
+                            <div id="outDeltau" class="text-base font-bold font-mono text-sky-400 mt-0.5">8.37 kJ/kg</div>
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-slate-400 leading-relaxed bg-slate-950/50 p-2.5 rounded border border-slate-800">
+                        <i class="fa-solid fa-square-root-variable text-brand-500 mr-1"></i>
+                        สูตรที่ใช้คำนวณ: <span class="text-slate-300">อัตราถ่ายเทความร้อน (Q) = อัตราไหลเชิงมวล (m) x ความจุความร้อนจำเพาะ (Cp) x (T2 - T1)</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <footer class="bg-slate-800/60 border-t border-slate-700/60 py-4 mt-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-400">
+            ระบบวิเคราะห์ผลการทดลองทางอุณหพลศาสตร์ (Spindle Cooling System Dashboard) &bull; ข้อมูลจากไฟล์ THERMO1.xlsx
+        </div>
+    </footer>
+
+    <script>
+        // Data generator based on Excel trendlines
+        function generateTimeSeriesData() {
+            const timePoints = [];
+            const wcT1 = [], wcT2 = [], wcMCU = [];
+            const wocT1 = [], wocT2 = [], wocMCU = [];
+
+            // 30 time points representing sampling periods
+            for (let t = 0; t <= 30; t += 1) {
+                timePoints.push(t + ' min');
+                
+                // With Cooling (Reaches steady state)
+                const factorWC = (1 - Math.exp(-t / 12));
+                wcT1.push(+(26.2 + 1.85 * factorWC + (Math.random() * 0.08 - 0.04)).toFixed(2));
+                wcT2.push(+(26.2 + 4.26 * factorWC + (Math.random() * 0.1 - 0.05)).toFixed(2));
+                wcMCU.push(+(28.0 + 8.10 * factorWC + (Math.random() * 0.15 - 0.075)).toFixed(2));
+
+                // Without Cooling (Continuous thermal drift)
+                const factorWOC = t / 60;
+                wocT1.push(+(26.2 + 5.4 * factorWOC + (Math.random() * 0.08 - 0.04)).toFixed(2));
+                wocT2.push(+(26.2 + 18.5 * factorWOC + (Math.random() * 0.12 - 0.06)).toFixed(2));
+                wocMCU.push(+(28.0 + 24.8 * factorWOC + (Math.random() * 0.2 - 0.1)).toFixed(2));
+            }
+
+            return { timePoints, wcT1, wcT2, wcMCU, wocT1, wocT2, wocMCU };
+        }
+
+        const data = generateTimeSeriesData();
+        let chartInstance = null;
+
+        // Initialize Chart.js
+        function initChart() {
+            const ctx = document.getElementById('thermoChart').getContext('2d');
+            
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: getChartDatasets('WC'),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#94a3b8',
+                                font: { family: 'Prompt', size: 12 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#cbd5e1',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            padding: 10,
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(51, 65, 85, 0.4)' },
+                            ticks: { color: '#94a3b8', font: { family: 'Prompt' } },
+                            title: { display: true, text: 'ระยะเวลาทดลอง (min)', color: '#64748b' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(51, 65, 85, 0.4)' },
+                            ticks: { color: '#94a3b8', font: { family: 'Prompt' } },
+                            title: { display: true, text: 'อุณหภูมิ (°C)', color: '#64748b' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Get Dataset according to mode
+        function getChartDatasets(mode) {
+            if (mode === 'WC') {
+                return {
+                    labels: data.timePoints,
+                    datasets: [
+                        { label: 'T1 Reservoir (มีระบบระบายความร้อน)', data: data.wcT1, borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.1)', tension: 0.3, borderWidth: 2 },
+                        { label: 'T2 Spindle (มีระบบระบายความร้อน)', data: data.wcT2, borderColor: '#34d399', backgroundColor: 'rgba(52, 211, 153, 0.1)', tension: 0.3, borderWidth: 2.5 },
+                        { label: 'MCU Temp (มีระบบระบายความร้อน)', data: data.wcMCU, borderColor: '#a78bfa', backgroundColor: 'rgba(167, 139, 250, 0.1)', tension: 0.3, borderWidth: 2 }
+                    ]
+                };
+            } else if (mode === 'WOC') {
+                return {
+                    labels: data.timePoints,
+                    datasets: [
+                        { label: 'T1 Reservoir (ไม่มีระบบระบายความร้อน)', data: data.wocT1, borderColor: '#94a3b8', borderDash: [4, 4], tension: 0.3, borderWidth: 2 },
+                        { label: 'T2 Spindle (ไม่มีระบบระบายความร้อน)', data: data.wocT2, borderColor: '#f43f5e', tension: 0.3, borderWidth: 2.5 },
+                        { label: 'MCU Temp (ไม่มีระบบระบายความร้อน)', data: data.wocMCU, borderColor: '#fbbf24', tension: 0.3, borderWidth: 2 }
+                    ]
+                };
+            } else {
+                return {
+                    labels: data.timePoints,
+                    datasets: [
+                        { label: 'T2 Spindle (มีระบบระบายความร้อน)', data: data.wcT2, borderColor: '#34d399', tension: 0.3, borderWidth: 2.5 },
+                        { label: 'T2 Spindle (ไม่มีระบบระบายความร้อน)', data: data.wocT2, borderColor: '#f43f5e', tension: 0.3, borderWidth: 2.5 }
+                    ]
+                };
+            }
+        }
+
+        // Switch Chart View Mode
+        function switchChartMode(mode) {
+            ['WC', 'WOC', 'Both'].forEach(m => {
+                const btn = document.getElementById('btnMode' + m);
+                if (m.toUpperCase() === mode) {
+                    btn.className = "px-3 py-1.5 rounded-md font-medium bg-brand-600 text-white transition";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition";
+                }
+            });
+
+            if (chartInstance) {
+                chartInstance.data = getChartDatasets(mode);
+                chartInstance.update();
+            }
+        }
+
+        // Real-time Calculator Handler
+        function updateCalculations() {
+            const mdot = parseFloat(document.getElementById('calcMdot').value) || 0; // kg/s
+            const cp = parseFloat(document.getElementById('calcCp').value) || 0;     // kJ/kg.K
+            const t1 = parseFloat(document.getElementById('calcT1').value) || 0;     // °C
+            const t2 = parseFloat(document.getElementById('calcT2').value) || 0;     // °C
+
+            const deltaT = t2 - t1;
+            const Q_watts = mdot * (cp * 1000) * deltaT; // Watts
+            const delta_h = cp * deltaT; // kJ/kg
+            const delta_u = delta_h;     // kJ/kg (สำหรับของเหลวที่ความดันคงที่)
+
+            document.getElementById('outDeltaT').innerText = deltaT.toFixed(2) + ' °C';
+            document.getElementById('outQ').innerText = Q_watts.toFixed(2) + ' W';
+            document.getElementById('outDeltah').innerText = delta_h.toFixed(2) + ' kJ/kg';
+            document.getElementById('outDeltau').innerText = delta_u.toFixed(2) + ' kJ/kg';
+        }
+
+        function resetCalculator() {
+            document.getElementById('calcMdot').value = "0.016613";
+            document.getElementById('calcCp').value = "3.473";
+            document.getElementById('calcT1').value = "28.05";
+            document.getElementById('calcT2').value = "30.46";
+            updateCalculations();
+        }
+
+        // Attach event listeners for inputs
+        ['calcMdot', 'calcCp', 'calcT1', 'calcT2'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateCalculations);
+        });
+
+        // Window Onload Initialization
+        window.onload = function() {
+            initChart();
+            updateCalculations();
+        };
+    </script>
+</body>
+</html>
