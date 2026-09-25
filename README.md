@@ -45,4 +45,6 @@ MIT License
 
 | Name | Student ID |
 |------|------------|
-| Nonpawit Munpleng | 82915630 |
+| Nonpawit Munpleng | 2311210229 |
+| Mintada Khanthong | 2511410033 |
+| Runch Suwanchart | 2511410041 |
