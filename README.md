@@ -1,50 +1,48 @@
 # Thermofluids
 
-A web-based thermofluid properties library for calculating and visualizing thermophysical properties of common fluids.
+ENG-216 Thermo-Fluids Engineering Mini-Project: Spindle Liquid Cooling System Analysis
 
 ## Overview
 
-This project provides interactive tools for calculating thermophysical properties of various fluids including:
-- Water and steam
-- Refrigerants (R-134a, R-410A, etc.)
-- Common gases
-- Oils and lubricants
+This project analyzes the thermal performance of a spindle liquid cooling system using PTT 50:50 MEG coolant. It includes an interactive dashboard for real-time thermal calculations and a formal engineering report.
 
-## Features
+## Components
 
-- **Property Calculation**: Calculate pressure, temperature, enthalpy, entropy, density, and other key thermodynamic properties
-- **Interactive Charts**: Visual representation of property relationships
-- **Multiple Fluid Support**: Support for various working fluids used in HVAC, refrigeration, and power systems
-- **Web-Based Interface**: No installation required - runs directly in the browser
+- **Dashboard (`index.html`)**: Interactive analysis tool displaying thermal metrics including mass flow rate, heat transfer rate, heat storage rate, heat generation rate, and temperature differences.
+- **Report (`report.html`)**: Complete engineering report for ENG-216 Thermo-Fluids Engineering Mini-Project with detailed analysis and visualizations.
 
-## Files
+## Key Results
 
-- `index.html` - Main application interface
-- `report.html` - Report generation with charts
-- `output/` - Generated reports and data files
+- **Mass Flow Rate**: 0.0166 kg/s (16.0 cm³/s volumetric flow)
+- **Heat Transfer Rate**: 139.07 W (with cooling system)
+- **Heat Storage Rate**: 10.79 W (accumulated in coolant tank)
+- **Heat Generation Rate**: 74.74 W (without cooling system)
+- **Temperature Difference**: 2.41°C (inlet-outlet)
 
-## Usage
+## Coolant
 
-1. Open `index.html` in a web browser
-2. Select the desired fluid
-3. Enter input parameters (pressure, temperature, etc.)
-4. View calculated properties and charts
+- **Type**: PTT 50:50 MEG (Monoethylene Glycol)
+- **Status**: Active monitoring
 
 ## Technologies
 
 - HTML5
-- CSS3
-- JavaScript (ES6+)
-- Chart.js or similar for visualizations
+- Tailwind CSS
+- Chart.js
+- Font Awesome Icons
+- Google Fonts (Prompt)
+
+## Usage
+
+1. Open `index.html` in a web browser to view the interactive dashboard
+2. Click "รายงานผลการวิเคราะห์" in the header to access the full engineering report
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT License
 
 ## Authors
 
 | Name | Student ID |
 |------|------------|
-| Nonpawit Munpleng | 2311210229 |
-| Mintada Khanthong | 2511410033 |
-| Runch Suwanchart | 2511410041 |
+| Nonpawit Munpleng | 82915630 |
